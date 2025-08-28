@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>Add Group - SK Filter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,20 +22,20 @@
                 
                 <div id="connect-prompt" class="instructions" style="display: none;">
                     <h4>Authorize with GroupMe</h4>
-                    <p>To add a filter, you must first securely connect your GroupMe account.</p>
+                    <p>To select a group, you must first securely connect your GroupMe account.</p>
                     <a href="connect-groupme.html" class="button-primary" style="width: 100%; box-sizing: border-box;">Connect with GroupMe</a>
                 </div>
 
                 <div id="form-container" style="display: none;">
                     <div class="instructions">
-                        <p>Choose a group you own or administrate. We will automatically create and configure the "SK Filter" bot for you.</p>
+                        <p>Search for and select a group you own or administrate. We will automatically create and configure the "SK Filter" bot for you.</p>
                     </div>
 
                     <form id="addGroupForm">
                         <div class="form-group">
                             <label for="groupSelector">Your Manageable Groups</label>
                             <p id="loading-groups-text">Loading your groups...</p>
-                            <select id="groupSelector" name="groupSelector" style="display: none;"></select>
+                            <select id="groupSelector" name="groupSelector"></select>
                         </div>
                         
                         <input type="hidden" id="groupName" name="groupName">
@@ -48,7 +49,8 @@
             </div>
         </main>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    
     <script type="module" src="js/add-group.js"></script>
 </body>
 </html>
