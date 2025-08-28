@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Group - SK Filter</title>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -18,39 +19,36 @@
     <div class="container">
         <main>
             <div class="auth-form-container">
-                <h2>Add a New Group Filter</h2>
+                <h2>Add New Group Filters</h2>
                 
                 <div id="connect-prompt" class="instructions" style="display: none;">
                     <h4>Authorize with GroupMe</h4>
-                    <p>To select a group, you must first securely connect your GroupMe account.</p>
+                    <p>To select groups, you must first securely connect your GroupMe account.</p>
                     <a href="connect-groupme.html" class="button-primary" style="width: 100%; box-sizing: border-box;">Connect with GroupMe</a>
                 </div>
 
                 <div id="form-container" style="display: none;">
                     <div class="instructions">
-                        <p>Search for and select a group you own or administrate. We will automatically create and configure the "SK Filter" bot for you.</p>
+                        <p>Search for and select one or more groups you own or administrate. We will automatically create and configure a unique "SK Filter" bot for each selected group.</p>
                     </div>
 
                     <form id="addGroupForm">
                         <div class="form-group">
                             <label for="groupSelector">Your Manageable Groups</label>
                             <p id="loading-groups-text">Loading your groups...</p>
-                            <select id="groupSelector" name="groupSelector"></select>
+                            <select id="groupSelector" name="groupSelector" multiple></select>
                         </div>
-                        
-                        <input type="hidden" id="groupName" name="groupName">
-                        <input type="hidden" id="groupId" name="groupId">
                         <input type="hidden" id="userToken" name="userToken">
                         
-                        <button type="submit" class="button-primary">Create Bot & Save Filter</button>
+                        <button type="submit" class="button-primary">Create Filters for Selected Groups</button>
                         <p id="formMessage" class="form-message"></p>
                     </form>
                 </div>
             </div>
         </main>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    
     <script type="module" src="js/add-group.js"></script>
 </body>
 </html>
