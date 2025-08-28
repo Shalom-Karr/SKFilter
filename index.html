@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SK Filter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-top">
+             <a href="index.html" class="logo">SK Filter</a>
+            <nav class="main-nav">
+                <!-- Navigation is dynamically built by js/auth.js -->
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <main>
+            <h1>My GroupMe Filter Configurations</h1>
+            
+            <div id="profileCompletionPrompt" class="profile-prompt" style="display: none;">
+                <h2>Welcome to SK Filter!</h2>
+                <p>To start adding and managing your group filters, please complete your profile first.</p>
+                <a href="profile.html" class="button-primary">Complete My Profile</a>
+            </div>
+
+            <div id="mainDashboardContent" style="display: none;">
+                <p>Welcome! Add your first group filter below. You will be asked to connect your GroupMe account to authorize the service.</p>
+                
+                <div class="card">
+                    <a href="add-group.html" class="button-primary">Add New Group Filter</a>
+                </div>
+
+                <div id="loading-groups" style="display: none; margin-top: 20px;">Loading your groups...</div>
+                <div id="groups-list" class="groups-container">
+                </div>
+                <p id="groups-error" class="form-message error"></p>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

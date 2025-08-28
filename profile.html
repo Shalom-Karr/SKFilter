@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile - SK Filter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-top">
+            <a href="index.html" class="logo">SK Filter</a>
+            <nav class="main-nav">
+                <!-- Nav built by js/auth.js -->
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <main>
+            <div class="auth-form-container">
+                <h2>Complete Your Profile</h2>
+                <p>Please provide your name and phone number to continue.</p>
+
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" disabled>
+                        <p class="help-text">Your email address cannot be changed.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="fullName">Name (Can be a Nickname)</label>
+                        <input type="text" id="fullName" name="fullName" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone Number</label>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="(123) 456-7890">
+                    </div>
+                    <button type="submit" class="button-primary">Save and Continue</button>
+                    <p id="profileMessage" class="form-message"></p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/profile.js"></script>
+</body>
+</html>

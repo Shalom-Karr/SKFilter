@@ -1,0 +1,346 @@
+/* style.css - Tailored for GroupMe Filter Service */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Lato:wght@400;700;900&display=swap');
+
+:root {
+    --primary-color: #007bff; /* A slightly brighter, more modern blue */
+    --secondary-color: #f8f9fa;
+    --header-bg: #343a40; /* Darker header for contrast */
+    --card-bg: #ffffff;
+    --text-color: #343a40;
+    --text-light: #6c757d;
+    --border-color: #dee2e6;
+    --success-color: #198754;
+    --error-color: #dc3545;
+    --button-danger-bg: #c82333;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --border-radius: 8px;
+}
+
+/* --- Global & Body --- */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+h1, h2, h3 {
+    font-family: 'Lato', sans-serif;
+}
+
+/* --- Header & Navigation --- */
+.site-header {
+    background: var(--header-bg);
+    color: white;
+    box-shadow: var(--shadow-md);
+    padding: 10px 0;
+}
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.logo {
+    font-family: 'Lato', sans-serif;
+    font-weight: 900;
+    font-size: 1.8em;
+    color: white;
+    text-decoration: none;
+}
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.main-nav a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 18px;
+    border-radius: var(--border-radius);
+    transition: background-color 0.2s;
+    font-weight: 700;
+    font-size: 1em;
+}
+.main-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.main-nav a.active {
+    background-color: var(--primary-color);
+}
+
+/* --- Buttons --- */
+.button-primary, .button-danger {
+    padding: 12px 20px;
+    border-radius: var(--border-radius);
+    font-weight: 700;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+.button-primary { background-color: var(--primary-color); color: white; }
+.button-primary:hover:not(:disabled) { background-color: #0056b3; transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.button-primary:disabled { background-color: #999; cursor: not-allowed; }
+.button-danger { background-color: var(--error-color); color: white; }
+.button-danger:hover { background-color: var(--button-danger-bg); }
+
+
+/* --- Authentication & Form Pages --- */
+.auth-page .container {
+    max-width: 900px;
+}
+.auth-form-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: var(--border-radius);
+    background-color: white;
+    box-shadow: var(--shadow-md);
+}
+.auth-form-container h2 {
+    text-align: center;
+    margin-top: 0;
+}
+.auth-form-container > p {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 30px;
+}
+.form-group {
+    margin-bottom: 20px;
+}
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+/* --- THIS IS THE CORRECTED LINE --- */
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+.auth-form-container button[type="submit"] {
+    width: 100%;
+    margin-top: 10px;
+}
+.auth-switch-link {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 0.9em;
+}
+.auth-switch-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 700;
+}
+.auth-switch-link a:hover {
+    text-decoration: underline;
+}
+
+/* --- Form Messages (Success/Error) --- */
+.form-message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    text-align: center;
+    display: none;
+}
+.form-message.visible {
+    display: block;
+}
+.form-message.success {
+    color: var(--success-color);
+    background-color: #d1e7dd;
+}
+.form-message.error {
+    color: var(--error-color);
+    background-color: #f8d7da;
+}
+
+/* --- Dashboard Specific Styles (index.html) --- */
+.card {
+    background-color: var(--card-bg);
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+}
+.groups-container {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+.group-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.group-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+.group-card h3 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+.group-card p {
+    color: var(--text-light);
+    margin: 5px 0;
+    word-break: break-all;
+}
+.group-card .delete-btn {
+    margin-top: 15px;
+    align-self: flex-end;
+}
+.status-active, .status-inactive {
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 0.8em;
+}
+.status-active {
+    color: var(--success-color);
+    background-color: #d1e7dd;
+}
+.status-inactive {
+    color: var(--text-light);
+    background-color: #e9ecef;
+}
+
+
+/* --- Add Group Page Specific Styles (add-group.html) --- */
+.instructions {
+    background-color: #e9f5ff;
+    border: 1px solid #bde0fe;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    margin-bottom: 30px;
+}
+.instructions h4 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+.instructions ol {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+.instructions li {
+    margin-bottom: 10px;
+}
+.instructions a {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+.instructions input[type="text"] {
+    background-color: #fff;
+    font-family: monospace;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .header-top {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .main-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .auth-form-container {
+        padding: 25px;
+        margin: 20px auto;
+    }
+}
+
+.help-text {
+    font-size: 0.85em;
+    color: var(--text-light);
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.instructions .code-example {
+    background-color: #e9ecef;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    margin: 8px 0;
+    font-family: monospace;
+    font-size: 0.95em;
+    word-break: break-all;
+    border: 1px solid #ced4da;
+}
+
+.instructions code {
+    background-color: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    color: var(--button-danger-bg); 
+    font-weight: bold;
+}
+
+.profile-prompt {
+    background-color: #e9f5ff;
+    border: 1px solid #bde0fe;
+    border-radius: var(--border-radius);
+    padding: 30px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.profile-prompt h2 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+.profile-prompt p {
+    font-size: 1.1em;
+    color: var(--text-color);
+    margin-bottom: 25px;
+}
+
+.form-group-hidden {
+    display: none;
+}
+
+.token-success-message {
+    background-color: #d1e7dd; /* Light green background */
+    color: var(--success-color);
+    padding: 12px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+}

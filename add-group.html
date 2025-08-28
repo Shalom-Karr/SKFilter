@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Group - SK Filter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-top">
+            <a href="index.html" class="logo">SK Filter</a>
+            <nav class="main-nav"></nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <main>
+            <div class="auth-form-container">
+                <h2>Add a New Group Filter</h2>
+                
+                <div id="connect-prompt" class="instructions" style="display: none;">
+                    <h4>Authorize with GroupMe</h4>
+                    <p>To add a filter, you must first securely connect your GroupMe account.</p>
+                    <a href="connect-groupme.html" class="button-primary" style="width: 100%; box-sizing: border-box;">Connect with GroupMe</a>
+                </div>
+
+                <div id="form-container" style="display: none;">
+                    <div class="instructions">
+                        <p>Choose a group you own or administrate. We will automatically create and configure the "SK Filter" bot for you.</p>
+                    </div>
+
+                    <form id="addGroupForm">
+                        <div class="form-group">
+                            <label for="groupSelector">Your Manageable Groups</label>
+                            <p id="loading-groups-text">Loading your groups...</p>
+                            <select id="groupSelector" name="groupSelector" style="display: none;"></select>
+                        </div>
+                        
+                        <input type="hidden" id="groupName" name="groupName">
+                        <input type="hidden" id="groupId" name="groupId">
+                        <input type="hidden" id="userToken" name="userToken">
+                        
+                        <button type="submit" class="button-primary">Create Bot & Save Filter</button>
+                        <p id="formMessage" class="form-message"></p>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/add-group.js"></script>
+</body>
+</html>

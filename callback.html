@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processing... - SK Filter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="text-align: center; padding-top: 50px;">
+        <h2>Authenticating...</h2>
+        <p>Please wait while we securely connect your account.</p>
+        <p id="callbackMessage" class="form-message"></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const messageEl = document.getElementById('callbackMessage');
+            const urlParams = new URLSearchParams(window.location.search);
+            const accessToken = urlParams.get('access_token');
+            const authCode = urlParams.get('code');
+
+            if (accessToken) {
+                // Handle direct access token (Implicit Grant Flow)
+                localStorage.setItem('groupme_access_token', accessToken);
+                window.location.href = 'add-group.html';
+
+            } else if (authCode) {
+                // Handle authorization code (Authorization Code Grant Flow)
+                try {
+                    const response = await fetch('/api/groupme-oauth', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            code: authCode,
+                            redirect_uri: window.location.origin + window.location.pathname
+                        })
+                    });
+                    
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Unknown error from server.');
+                    }
+                    
+                    localStorage.setItem('groupme_access_token', data.access_token);
+                    window.location.href = 'add-group.html';
+
+                } catch (err) {
+                    console.error('OAuth callback error:', err);
+                    messageEl.textContent = `Authentication failed: ${err.message}. Please try again.`;
+                    messageEl.className = 'form-message error visible';
+                }
+
+            } else {
+                // Handle failure case where no token or code is found
+                messageEl.textContent = 'Authentication failed: No token or code found in the URL. Please try connecting again.';
+                messageEl.className = 'form-message error visible';
+            }
+        });
+    </script>
+</body>
+</html>

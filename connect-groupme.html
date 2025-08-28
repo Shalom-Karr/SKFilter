@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Connect Account - SK Filter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-top">
+            <a href="index.html" class="logo">SK Filter</a>
+            <nav class="main-nav"></nav>
+        </div>
+    </header>
+    <div class="container">
+        <main>
+            <div class="auth-form-container">
+                <h2>Connect Your GroupMe Account</h2>
+                <p>To configure a filter, you first need to securely connect your GroupMe account. This allows us to verify you as the group owner.</p>
+                <a href="#" id="connectBtn" class="button-primary" style="width: 100%; box-sizing: border-box;">Connect with GroupMe</a>
+                <p class="help-text" style="text-align: center; margin-top: 15px;">You will be redirected to groupme.com to log in.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const connectBtn = document.getElementById('connectBtn');
+            
+            // --- YOUR ACTUAL CLIENT ID IS NOW IN THE CODE ---
+            const GROUPME_CLIENT_ID = 'd8kkLKXqUFnlWbOSqttI6hHuuSWyDOdpoAYZOk517fRctDQn';
+            
+            // --- YOUR LIVE NETLIFY URL IS NOW IN THE CODE ---
+            const REDIRECT_URI = 'https://SKFilterOauthTest.netlify.app/callback.html';
+
+            const authUrl = `https://oauth.groupme.com/oauth/authorize?client_id=${GROUPME_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+            connectBtn.href = authUrl;
+        });
+    </script>
+</body>
+</html>

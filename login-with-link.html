@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login With Link - Kemach Cleveland</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+    <header class="site-header">
+        <div class="header-top">
+            <nav class="main-nav">
+                <!-- Navigation is dynamically built by js/auth.js -->
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <main>
+            <div class="auth-form-container">
+                <h2>Login with a Magic Link</h2>
+                <p>Enter your email below, and we'll send you a link to log in without a password.</p>
+                <form id="magicLinkForm">
+                    <div class="form-group">
+                        <label for="magicLinkEmail">Email:</label>
+                        <input type="email" id="magicLinkEmail" name="email" required placeholder="your.email@example.com">
+                    </div>
+                    <button type="submit" class="button-primary">Send Magic Link</button>
+                    <p id="magicFormMessage" class="form-message"></p>
+                    <p class="auth-switch-link">Remember your password? <a href="login.html">Login with password instead</a>.</p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+    <script type="module">
+        import { supabase } from './js/supabase-client.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const magicLinkForm = document.getElementById('magicLinkForm');
+            const emailInput = document.getElementById('magicLinkEmail');
+            const messageEl = document.getElementById('magicFormMessage');
+            const submitBtn = magicLinkForm.querySelector('button[type="submit"]');
+
+            magicLinkForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+                messageEl.textContent = '';
+                messageEl.className = 'form-message';
+
+                const email = emailInput.value;
+                const { error } = await supabase.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        emailRedirectTo: `${window.location.origin}/index.html`,
+                    }
+                });
+
+                if (error) {
+                    messageEl.textContent = `Error: ${error.message}`;
+                    messageEl.className = 'form-message error visible';
+                } else {
+                    messageEl.textContent = `Success! Check your email at ${email} for a login link.`;
+                    messageEl.className = 'form-message success visible';
+                    emailInput.value = '';
+                }
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Magic Link';
+            });
+        });
+    </script>
+</body>
+</html>

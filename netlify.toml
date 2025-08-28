@@ -1,0 +1,19 @@
+# File: netlify.toml
+
+[build]
+  functions = "netlify/functions/"
+
+[[redirects]]
+  from = "/api/groupme-oauth"
+  to = "/.netlify/functions/groupme-oauth"
+  status = 200
+
+[[redirects]]
+  from = "/api/get-groups"
+  to = "/.netlify/functions/get-groupme-groups"
+  status = 200
+
+[[redirects]]
+  from = "/api/create-bot"
+  to = "/.netlify/functions/create-groupme-bot"
+  status = 200
