@@ -90,9 +90,13 @@ exports.handler = async (event) => {
         ({ response, responseText } = await createBot(accessToken, groupId));
       }
 
-      // If still failing, fall back to a placeholder callback URL
-      if (!response.ok && /callback url.*already registered/i.test(responseText)) {
-        console.log('Retry failed. Creating bot with placeholder callback URL...');
+      // If still failing, try placeholder callback URLs with incrementing suffixes
+      const PLACEHOLDER_BASE = 'https://skfilter.netlify.app/fake/callback';
+      const placeholderSuffixes = ['', '/1', '/2', '/3', '/4', '/5', '/6', '/7', '/8', '/9'];
+      for (const suffix of placeholderSuffixes) {
+        if (response.ok || !/callback url.*already registered/i.test(responseText)) break;
+        const placeholderUrl = PLACEHOLDER_BASE + suffix;
+        console.log(`Trying placeholder callback URL: ${placeholderUrl}`);
         const placeholderResponse = await fetch('https://api.groupme.com/v3/bots', {
           method: 'POST',
           headers: {
@@ -103,7 +107,7 @@ exports.handler = async (event) => {
             bot: {
               name: 'SK Filter',
               group_id: groupId,
-              callback_url: 'https://skfilter.netlify.app/fake/callback',
+              callback_url: placeholderUrl,
             },
           }),
         });
