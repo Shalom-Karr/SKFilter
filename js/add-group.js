@@ -158,7 +158,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                         groupId: group.value // The ID of the group to create the bot in
                     })
                 });
-                const botData = await createBotResponse.json(); // Parse the JSON response from the /api/create-bot endpoint
+
+                // Parse the response, handling potential non-JSON responses
+                let botData;
+                try {
+                    botData = await createBotResponse.json();
+                } catch (parseError) {
+                    throw new Error(`Failed to create bot for "${group.label}". Server returned status ${createBotResponse.status}.`);
+                }
                 
                 // Check if the bot creation request was successful (status code 2xx)
                 if (!createBotResponse.ok) { 
