@@ -36,12 +36,36 @@ exports.handler = async (event) => {
     });
 
     if (!response.ok) {
-      const errorBody = await response.json();
-      console.error('GroupMe bot creation failed:', errorBody);
-      throw new Error(errorBody.errors ? errorBody.errors.join(', ') : 'Failed to create bot in GroupMe.');
+      let errorMessage = `GroupMe API error (status ${response.status})`;
+      try {
+        const errorBody = await response.json();
+        console.error('GroupMe bot creation failed:', errorBody);
+        if (errorBody.errors && errorBody.errors.length > 0) {
+          errorMessage = errorBody.errors.join(', ');
+        } else if (errorBody.meta && errorBody.meta.errors) {
+          errorMessage = errorBody.meta.errors.join(', ');
+        }
+      } catch (parseError) {
+        const textBody = await response.text().catch(() => '');
+        console.error('GroupMe bot creation failed with non-JSON response:', response.status, textBody);
+      }
+      throw new Error(errorMessage);
     }
 
-    const responseData = await response.json();
+    const responseText = await response.text();
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('Failed to parse GroupMe success response:', responseText);
+      throw new Error('Unexpected response format from GroupMe API.');
+    }
+
+    if (!responseData.response || !responseData.response.bot || !responseData.response.bot.bot_id) {
+      console.error('Unexpected response structure from GroupMe:', responseData);
+      throw new Error('GroupMe API returned an unexpected response structure.');
+    }
+
     const botId = responseData.response.bot.bot_id;
 
     // Success! Send the new bot's ID back to the frontend.
