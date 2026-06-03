@@ -3,6 +3,68 @@
 // IMPORTANT: You must set this in your Netlify Environment Variables
 const { GOOGLE_SCRIPT_CALLBACK_URL } = process.env;
 
+/**
+ * Finds and destroys an existing bot with the same callback URL in the given group.
+ * Returns true if a bot was destroyed, false otherwise.
+ */
+async function destroyExistingBot(accessToken, groupId) {
+  // List all bots for this user
+  const listResponse = await fetch('https://api.groupme.com/v3/bots?token=' + accessToken);
+  if (!listResponse.ok) {
+    console.error('Failed to list bots:', listResponse.status);
+    return false;
+  }
+
+  const listData = await listResponse.json();
+  const bots = listData.response || [];
+
+  // Find a bot in this group with the same callback URL
+  const existingBot = bots.find(
+    (bot) => bot.group_id === groupId && bot.callback_url === GOOGLE_SCRIPT_CALLBACK_URL
+  );
+
+  if (!existingBot) {
+    return false;
+  }
+
+  // Destroy the existing bot
+  console.log(`Destroying existing bot ${existingBot.bot_id} in group ${groupId}`);
+  const destroyResponse = await fetch('https://api.groupme.com/v3/bots/destroy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Access-Token': accessToken },
+    body: JSON.stringify({ bot_id: existingBot.bot_id }),
+  });
+
+  if (!destroyResponse.ok) {
+    console.error('Failed to destroy existing bot:', destroyResponse.status);
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Creates a bot in a GroupMe group with the configured callback URL.
+ */
+async function createBot(accessToken, groupId) {
+  const response = await fetch('https://api.groupme.com/v3/bots', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Access-Token': accessToken,
+    },
+    body: JSON.stringify({
+      bot: {
+        name: 'SK Filter',
+        group_id: groupId,
+        callback_url: GOOGLE_SCRIPT_CALLBACK_URL,
+      },
+    }),
+  });
+  const responseText = await response.text();
+  return { response, responseText };
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
@@ -17,25 +79,16 @@ exports.handler = async (event) => {
         throw new Error("Server configuration error: Callback URL not set.");
     }
 
-    const createBotUrl = 'https://api.groupme.com/v3/bots';
-    const botPayload = {
-      bot: {
-        name: 'SK Filter',
-        group_id: groupId,
-        callback_url: GOOGLE_SCRIPT_CALLBACK_URL
+    let { response, responseText } = await createBot(accessToken, groupId);
+
+    // If bot creation failed due to duplicate callback URL, destroy existing bot and retry
+    if (!response.ok && /callback url.*already registered/i.test(responseText)) {
+      console.log('Duplicate callback URL detected. Destroying existing bot and retrying...');
+      const destroyed = await destroyExistingBot(accessToken, groupId);
+      if (destroyed) {
+        ({ response, responseText } = await createBot(accessToken, groupId));
       }
-    };
-
-    const response = await fetch(createBotUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Access-Token': accessToken,
-      },
-      body: JSON.stringify(botPayload),
-    });
-
-    const responseText = await response.text();
+    }
 
     if (!response.ok) {
       let errorMessage = `GroupMe API error (status ${response.status})`;
