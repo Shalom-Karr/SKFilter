@@ -80,6 +80,7 @@ exports.handler = async (event) => {
     }
 
     let { response, responseText } = await createBot(accessToken, groupId);
+    let usedPlaceholderCallback = false;
 
     // If bot creation failed due to duplicate callback URL, destroy existing bot and retry
     if (!response.ok && /callback url.*already registered/i.test(responseText)) {
@@ -87,6 +88,28 @@ exports.handler = async (event) => {
       const destroyed = await destroyExistingBot(accessToken, groupId);
       if (destroyed) {
         ({ response, responseText } = await createBot(accessToken, groupId));
+      }
+
+      // If still failing, fall back to a placeholder callback URL
+      if (!response.ok && /callback url.*already registered/i.test(responseText)) {
+        console.log('Retry failed. Creating bot with placeholder callback URL...');
+        const placeholderResponse = await fetch('https://api.groupme.com/v3/bots', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Access-Token': accessToken,
+          },
+          body: JSON.stringify({
+            bot: {
+              name: 'SK Filter',
+              group_id: groupId,
+              callback_url: 'https://skfilter.netlify.app/fake/callback',
+            },
+          }),
+        });
+        responseText = await placeholderResponse.text();
+        response = placeholderResponse;
+        usedPlaceholderCallback = true;
       }
     }
 
@@ -122,9 +145,15 @@ exports.handler = async (event) => {
     const botId = responseData.response.bot.bot_id;
 
     // Success! Send the new bot's ID back to the frontend.
+    const result = { bot_id: botId };
+    if (usedPlaceholderCallback) {
+      result.warning = 'Bot was created with a placeholder callback URL. You must manually update the callback URL in GroupMe to: ' + GOOGLE_SCRIPT_CALLBACK_URL;
+      result.needs_manual_callback_fix = true;
+    }
+
     return {
       statusCode: 200,
-      body: JSON.stringify({ bot_id: botId }),
+      body: JSON.stringify(result),
     };
 
   } catch (error) {
