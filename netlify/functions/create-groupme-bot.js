@@ -80,6 +80,7 @@ exports.handler = async (event) => {
     }
 
     let { response, responseText } = await createBot(accessToken, groupId);
+    let usedPlaceholderCallback = false;
 
     // If bot creation failed due to duplicate callback URL, destroy existing bot and retry
     if (!response.ok && /callback url.*already registered/i.test(responseText)) {
@@ -87,6 +88,32 @@ exports.handler = async (event) => {
       const destroyed = await destroyExistingBot(accessToken, groupId);
       if (destroyed) {
         ({ response, responseText } = await createBot(accessToken, groupId));
+      }
+
+      // If still failing, try placeholder callback URLs with incrementing suffixes
+      const PLACEHOLDER_BASE = 'https://skfilter.netlify.app/fake/callback';
+      const placeholderSuffixes = ['', '/1', '/2', '/3', '/4', '/5', '/6', '/7', '/8', '/9'];
+      for (const suffix of placeholderSuffixes) {
+        if (response.ok || !/callback url.*already registered/i.test(responseText)) break;
+        const placeholderUrl = PLACEHOLDER_BASE + suffix;
+        console.log(`Trying placeholder callback URL: ${placeholderUrl}`);
+        const placeholderResponse = await fetch('https://api.groupme.com/v3/bots', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Access-Token': accessToken,
+          },
+          body: JSON.stringify({
+            bot: {
+              name: 'SK Filter',
+              group_id: groupId,
+              callback_url: placeholderUrl,
+            },
+          }),
+        });
+        responseText = await placeholderResponse.text();
+        response = placeholderResponse;
+        usedPlaceholderCallback = true;
       }
     }
 
@@ -122,9 +149,15 @@ exports.handler = async (event) => {
     const botId = responseData.response.bot.bot_id;
 
     // Success! Send the new bot's ID back to the frontend.
+    const result = { bot_id: botId };
+    if (usedPlaceholderCallback) {
+      result.warning = 'Bot was created with a placeholder callback URL. You must manually update the callback URL in GroupMe to: ' + GOOGLE_SCRIPT_CALLBACK_URL;
+      result.needs_manual_callback_fix = true;
+    }
+
     return {
       statusCode: 200,
-      body: JSON.stringify({ bot_id: botId }),
+      body: JSON.stringify(result),
     };
 
   } catch (error) {
