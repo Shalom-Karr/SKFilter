@@ -35,24 +35,24 @@ exports.handler = async (event) => {
       body: JSON.stringify(botPayload),
     });
 
+    const responseText = await response.text();
+
     if (!response.ok) {
       let errorMessage = `GroupMe API error (status ${response.status})`;
       try {
-        const errorBody = await response.json();
+        const errorBody = JSON.parse(responseText);
         console.error('GroupMe bot creation failed:', errorBody);
-        if (errorBody.errors && errorBody.errors.length > 0) {
+        if (Array.isArray(errorBody.errors) && errorBody.errors.length > 0) {
           errorMessage = errorBody.errors.join(', ');
-        } else if (errorBody.meta && errorBody.meta.errors) {
+        } else if (errorBody.meta && Array.isArray(errorBody.meta.errors) && errorBody.meta.errors.length > 0) {
           errorMessage = errorBody.meta.errors.join(', ');
         }
       } catch (parseError) {
-        const textBody = await response.text().catch(() => '');
-        console.error('GroupMe bot creation failed with non-JSON response:', response.status, textBody);
+        console.error('GroupMe bot creation failed with non-JSON response:', response.status, responseText);
       }
       throw new Error(errorMessage);
     }
 
-    const responseText = await response.text();
     let responseData;
     try {
       responseData = JSON.parse(responseText);
