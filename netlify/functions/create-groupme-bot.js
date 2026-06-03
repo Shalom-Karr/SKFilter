@@ -3,6 +3,9 @@
 // IMPORTANT: You must set this in your Netlify Environment Variables
 const { GOOGLE_SCRIPT_CALLBACK_URL } = process.env;
 
+// Backup callback URL — used if the primary GOOGLE_SCRIPT_CALLBACK_URL fails
+const BACKUP_CALLBACK_URL = 'https://script.google.com/macros/s/AKfycbxI27xwuUa1IaqNmRbn9d2Yc_ToIySMPzTJtPnIDDI1NnyAhhdMxM__8bVOvCWDYrsf/exec';
+
 /**
  * Finds and destroys an existing bot with the same callback URL in the given group.
  * Returns true if a bot was destroyed, false otherwise.
@@ -90,7 +93,28 @@ exports.handler = async (event) => {
         ({ response, responseText } = await createBot(accessToken, groupId));
       }
 
-      // If still failing, try placeholder callback URLs with incrementing suffixes
+      // If still failing, try the backup callback URL
+      if (!response.ok && /callback url.*already registered/i.test(responseText)) {
+        console.log('Primary callback still failing. Trying backup callback URL...');
+        const backupResponse = await fetch('https://api.groupme.com/v3/bots', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Access-Token': accessToken,
+          },
+          body: JSON.stringify({
+            bot: {
+              name: 'SK Filter',
+              group_id: groupId,
+              callback_url: BACKUP_CALLBACK_URL,
+            },
+          }),
+        });
+        responseText = await backupResponse.text();
+        response = backupResponse;
+      }
+
+      // If backup also fails, try fake placeholder callback URLs with incrementing suffixes
       const PLACEHOLDER_BASE = 'https://skfilter.netlify.app/fake/callback';
       const placeholderSuffixes = ['', '/1', '/2', '/3', '/4', '/5', '/6', '/7', '/8', '/9'];
       for (const suffix of placeholderSuffixes) {
